@@ -9,12 +9,12 @@ public class Control {
 
 
     public static void crearParqueadero(){
-        Scanner scan = new  Scanner(System.in);
+        Scanner scanner = new  Scanner(System.in);
         String opcion;
         System.out.println("MENU PARQUEADEROS");
         System.out.println("1. crear Parqueadero");
         System.out.println("2. acceder a parqueadero");
-        opcion = scan.nextLine();
+        opcion = scanner.nextLine();
 
         switch (opcion) {
             case "1":

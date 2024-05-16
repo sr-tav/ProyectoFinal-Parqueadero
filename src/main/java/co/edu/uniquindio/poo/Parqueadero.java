@@ -1,12 +1,19 @@
 package co.edu.uniquindio.poo;
 
+import java.util.Collection;
+
 public class Parqueadero {
 
     private String nombre;
     private int columnas;
     private int filas;
-    private Vehiculo[][] puestos;
-    private int[][] numPuestos;
+    private Puesto[][] puestos;
+    private Collection<Registro>listaRegistros;
+    private Collection<Vehiculo>listaVehiculos;
+    private Collection<Registro>listaRegistroReporteDiario;
+    private Collection<Registro>listaRegistroReporteMensual;
+    private Collection<Registro>listaReporteGeneral;
+    private Collection<Vehiculo>listaVehiculosTotalParqueadero;
 
     /*
      * Constructor de la clase Parqueadero
