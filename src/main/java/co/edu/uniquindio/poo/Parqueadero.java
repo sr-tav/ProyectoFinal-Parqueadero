@@ -1,5 +1,7 @@
 package co.edu.uniquindio.poo;
 
+import java.util.Collection;
+
 public class Parqueadero {
 
     private String nombre;
