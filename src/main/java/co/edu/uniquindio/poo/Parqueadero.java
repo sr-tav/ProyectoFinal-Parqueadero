@@ -7,7 +7,7 @@ public class Parqueadero {
     private int filas;
     private Vehiculo[][] puestos;
     private int[][] numPuestos;
-
+    //popo
     /*
      * Constructor de la clase Parqueadero
      */
