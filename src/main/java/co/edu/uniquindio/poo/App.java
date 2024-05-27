@@ -6,11 +6,6 @@ package co.edu.uniquindio.poo;
  */
 public class App {
     public static void main(String[] args) {
-        Parqueadero par = new Parqueadero("el pepe", 3, 2);
-        par.generarPuestos();
-        par.generarNumPuestos();
-        par.mostrarParqueadero();
-        
-
+        Control.crearParqueadero();
     }   
 }
