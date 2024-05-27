@@ -558,4 +558,318 @@ public class Parqueadero {
     public LocalDate getFecha() {
         return fecha;
     }
+    /*
+     * ========================================METODOS PARA MANEJAR EL MENU INTERACTIVO POR JOPTIONPANE===================================================
+     */
+    /*
+     *  Metodo estatico para crear un parqueadero por JOptionPane
+     */
+    public static Parqueadero crearParqueadero(){
+        String nombre = verificarEntradaTextoEstatico("Ingresa el nombre del parqueadero");
+        int columnas = (int) (verificarEntradaNumericaEstatico("Ingrese el numero de columnas del parqueadero"));
+        int filas = (int) (verificarEntradaNumericaEstatico("Ingrese el numero de filas del parqueadero"));
+
+        return new Parqueadero(nombre, columnas, filas);
+    }
+    /*
+     * Metodo para desplegar el menu para manejar el parqueadero
+     */
+    public void menuParqueadero(){
+        int opc = 5;
+        int opcion = (int) (verificarEntradaNumerica("=============MENU DEL PARQUEADERO \""+nombre+"\"=============\n 1 = agregar vehiculo"+"\n==============================================================\nTarifa para Carros: "+tarifaCarro+"\nTarifa para Motos Clasicas: "+tarifaMotoClasica+ "\nTarifa para Motos Hibridas: "+tarifaMotoHibrida+"\n=============================================================="));
+        
+        while (opcion > 0) {
+            if(opcion == 1) {
+                menuAgregarVehiculo();
+                while (opc > 0) {
+                    opc = (int) (verificarEntradaNumerica("=============MENU DEL PARQUEADERO \""+nombre+"\"============\n 1. agregar vehiculo\n 2. Retirar un vehiculo\n 3. Generar reportes\n 0.Salir"+"\n==============================================================\n" + //
+                                                "Tarifa para Carros: "+tarifaCarro+"\nTarifa para Motos Clasicas: "+tarifaMotoClasica+ "\nTarifa para Motos Hibridas: "+tarifaMotoHibrida+"\n=============================================================="));
+                    switch (opc) {
+                        case 1:
+                            menuAgregarVehiculo();
+                            break;
+                        case 2:
+                            menuRetirarUnVehiculo();
+                            break;
+                        case 3:
+                            menuGenerarReportes();
+                            break;
+                        /*
+                         * Opcion 0: Salir del menu
+                         */
+                        case 0:
+                            JOptionPane.showMessageDialog(null, "Muchas Gracias por utilizar nuestros servicios");
+                            opcion = 0;
+                            break;
+    
+                        default:
+                            JOptionPane.showMessageDialog(null, "Inserte una opcion valida");
+                            break;
+                    }
+                }
+            }else{
+                while (opcion != 1) {
+                    JOptionPane.showMessageDialog(null, "Ingrese un valor valido");
+                    opcion = Integer.parseInt(JOptionPane.showInputDialog("MENU PARQUEADERO\n" + " 1.agregar vehiculo"));
+                }
+            }
+        }
+    }
+    /*
+     * Metodo para desplegar el menu para agregar un vehiculo
+     */
+    public void menuAgregarVehiculo(){
+        // Registro informacion del propietario del vehiculo
+        Propietario propietario = new Propietario("Ejemplo", "Ejemplo", "Ejemplo", "Ejemplo");
+        String[] opciones = {"lista de propietarios" , "Crear uno nuevo"};
+        int opcionP = JOptionPane.showOptionDialog(null, "Seleccione que propietario desea agregar: ", "Menu agregar vehiculo", 0, 1, null, opciones, opciones[0]);
+        if (opcionP == 0) {
+            if (verificarListaPropietariosEstaLista() == true) {
+                Map<String, Propietario> temporal = new HashMap<>();
+                for(Propietario propietarioArreglo : propietarios){
+                    if(propietarioArreglo != null){
+                        temporal.put(propietarioArreglo.getNombre() + "-" + propietarioArreglo.getId(), propietarioArreglo);
+                    }
+                }
+                String[] opcionesPropietarios = temporal.keySet().toArray(new String[0]);
+                String propietarioSeleccionado = (String) JOptionPane.showInputDialog(null, "Seleccione el propietario de la lista: ", "Elegir", JOptionPane.QUESTION_MESSAGE,null,opcionesPropietarios,opcionesPropietarios[0]);
+                propietario = temporal.get(propietarioSeleccionado);
+            }else{
+                JOptionPane.showMessageDialog(null, "Aun no se han agregardo propietarios al parqueadero","Error",JOptionPane.ERROR_MESSAGE);
+                opcionP = 1;
+            }
+        }
+        if (opcionP == 1) {
+            String nombre = verificarEntradaTexto("Ingrese el nombre del propietario");
+            String id = verificarEntradaTexto("Ingrese el numero de identificacion del propietario");
+            String email = verificarEntradaTexto("Ingrese el correo del propietario");
+            String telefono = verificarEntradaTexto("Ingrese el telefono del propietario");
+            propietario = new Propietario(nombre, id, email, telefono);
+        }
+        
+        
+        // Registro informacion del vehiculo
+        int posicion = (int) (verificarEntradaNumerica("Ingrese en que posicion desea ubicar el vehiculo: \n" + mostrarParqueaderoDisponibilidad()));
+
+        while(verificarPosicionExiste(posicion) == false || verificarDisponibilidad(posicion) == false){
+            JOptionPane.showMessageDialog(null, "Aqui no hay ningun vehiculo / Este puesto esta ocupado", "Error", JOptionPane.ERROR_MESSAGE);
+            posicion = (int) (verificarEntradaNumerica("Ingrese en que posicion desea ubicar el vehiculo: \n" + mostrarParqueaderoDisponibilidad()));
+        }
+
+        String placa = verificarEntradaTexto("Ingrese la placa del vehiculo");
+        String modelo = verificarEntradaTexto("Ingrese el modelo del vehiculo");
+        int tipo = (int) (verificarEntradaNumerica("Ingrese el tipo de Vehiculo\n 1.Moto \n 2.Carro"));
+        while (tipo > 0) {
+            if (tipo == 1) {
+                double velocidad = verificarEntradaNumerica("Ingrese la velocidad maxima de la moto");
+                int tipoMoto = (int) (verificarEntradaNumerica("Ingrese el tipo de Moto\n 1.Clasica\n 2.Hibrida"));
+                while (tipoMoto > 0) {
+                    if (tipoMoto == 1) {
+                        anadirVehiculo(new Moto(propietario,placa, modelo, velocidad, TipoMoto.CLASICA), posicion);
+                        JOptionPane.showMessageDialog(null, "Moto Clasica agregada con exito");
+                        tipo = 0;
+                        tipoMoto = 0;
+                    }else if (tipoMoto == 2) {
+                        anadirVehiculo(new Moto(propietario,placa, modelo, velocidad, TipoMoto.HIBRIDA), posicion);
+                        JOptionPane.showMessageDialog(null, "Moto Hibrida agregada con exito");
+                        tipo = 0;
+                        tipoMoto = 0;
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Ingrese una opcion valida");
+                        tipoMoto = (int) (verificarEntradaNumerica("Ingrese el tipo de Moto\n 1.Clasica\n 2.Hibrida"));
+                    }
+                }
+                
+        
+            }else if (tipo == 2) {
+                int numPuertas = (int) (verificarEntradaNumerica("Ingrese el numero de puertas del Carro"));
+                anadirVehiculo(new Carro(propietario,placa, modelo, numPuertas), posicion);
+                JOptionPane.showMessageDialog(null, "Carro agregado con exito");
+                tipo = 0;
+
+            }else{
+                JOptionPane.showMessageDialog(null, "Ingrese una opcion valida");
+                tipo = (int) (verificarEntradaNumerica("Ingrese el tipo de Vehiculo\n 1.Moto \n 2.Carro"));
+            }
+        }
+    }
+    /*
+     * Metodo para desplegar el menu para acceder a la matriz del parqueadero y retirar un vehiculo
+     */
+    public void menuRetirarUnVehiculo(){
+        int opc3 = 5;
+        while (opc3 > 0) {
+            opc3 = mostrarParqueaderoYSeleccionar("Retirar");
+            if (opc3 != 0) {
+                if (ubicarVehiculo(opc3) == null || verificarPosicionExiste(opc3) == false) {
+                    JOptionPane.showMessageDialog(null, "Aqui no hay ningun vehiculo", "Error", JOptionPane.ERROR_MESSAGE);
+                }else{
+                    int respuesta = JOptionPane.showConfirmDialog(null, "¿Seguro que desea eliminar este Vehiculo?", "Retirar vehiculo", JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+                    if (respuesta == 0) {
+                        retirarVehiculo(opc3);
+                        JOptionPane.showMessageDialog(null,"El vehiculo fue retirado con exito");
+                    }
+                }               
+            }
+        }
+    }
+    /*
+     * Metodo para desplegar el menu para generar los reportes
+     */
+    public void menuGenerarReportes(){
+        String[] opciones = {"Reporte General", "Reporte Diario", "Reporte Mensual", "Reporte Total Vehiculos", "Regresar"};
+        int opc4 = 5;
+        
+        while (opc4 > 0) {
+            int seleccion = JOptionPane.showOptionDialog(null, "Seleccione el reporte que desea generar: ", "Menu reportes", 0, 1, null, opciones, opciones[0]);
+            if (seleccion == 0) {
+                menuAccederALaListaDeVehiculos();
+            }else if (seleccion == 1) {
+                if (reportesDiarios.size() == 0) {
+                JOptionPane.showMessageDialog(null, "Los reportes Diarios se generan al final del dia, espera a que se actualice el dia");
+                }else{
+                    mostrarReportesDiarios();
+                }
+
+            }else if (seleccion == 2) {
+
+                if (reportesMensuales.size() == 0) {
+                    JOptionPane.showMessageDialog(null, "Los reportes Mesuales se comienzan a generar al final del dia, espera a que se actualice el dia");
+                }else{
+                    mostrarReportesMensuales(fecha);
+                }
+            }else if (seleccion == 3) {
+                generarReporteTotal();
+            }else if (seleccion == 4) {
+                opc4 = 0;
+            }
+        }
+    }
+    /*
+     * Metodo para desplegar el menu para acceder a la matriz del parqueadero y inspeccionar vehiculos
+     */
+    public void menuAccederALaListaDeVehiculos(){
+        int opc2 = 5;
+        while (opc2 > 0) {
+            opc2 = (int)(verificarEntradaNumerica("<html>Selecciona el vehiculo que deseas inspeccionar <br> "+ mostrarParqueadero()+ "<br>"+ "0. Salir</html>"));
+            if (opc2 != 0) {
+                if (verificarPosicionExiste(opc2) == true || ubicarVehiculo(opc2) != null) {
+                    mostrarVehiculo(opc2);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Aqui no hay ningun vehiculo", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+        }
+    }
+    /*
+     * Metodo estatico para verificar que una entrada sea un texto
+     */
+    public static String verificarEntradaTextoEstatico(String informacion){
+        String resultado =  "";
+        boolean entradaValida = false;
+        while (!entradaValida) {
+            try {
+                resultado = JOptionPane.showInputDialog(informacion);
+                if (resultado == null) {
+                    break;
+                }else{
+                    entradaValida = true;
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Entrada invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return resultado;
+    }
+    /*
+     * Metodo para verificar que una entrada sea un texto
+     */
+    public String verificarEntradaTexto(String informacion){
+        String resultado =  "";
+        boolean entradaValida = false;
+        while (!entradaValida) {
+            try {
+                resultado = JOptionPane.showInputDialog(informacion);
+                if (resultado == null) {
+                    break;
+                }else{
+                    entradaValida = true;
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Entrada invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return resultado;
+    }
+    /*
+     * Metodo estatico para verificar que una entrada sea un numero
+     */
+    public static double verificarEntradaNumericaEstatico(String informacion){
+        double resultado = 0;
+        boolean entradaValida = false;
+        while (!entradaValida) {
+            try {
+                String entrada = JOptionPane.showInputDialog(informacion);
+                if (entrada == null) {
+                    break;
+                }else{
+                    resultado = Integer.parseInt(entrada);
+                    entradaValida = true;
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Entrada invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return resultado;
+    }
+    /*
+     * Metodo para verificar que una entrada sea un numero
+     */
+    public double verificarEntradaNumerica(String informacion){
+        double resultado = 0;
+        boolean entradaValida = false;
+        while (!entradaValida) {
+            try {
+                String entrada = JOptionPane.showInputDialog(informacion);
+                if (entrada == null) {
+                    break;
+                }else{
+                    resultado = Integer.parseInt(entrada);
+                    entradaValida = true;
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Entrada invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return resultado;
+    }
+    /*
+     * ==================================================== METODOS QUE SE USAN EN LOS TEST =======================================================
+     */
+    /*
+     * Metodo para establecer las tarifas del parqueadero
+     */
+    public void establecerTarifas(double tarifaCarro, double tarifaMotoClasica, double tarifaMotoHibrida){
+        assert tarifaCarro > 0;
+        assert tarifaMotoClasica > 0;
+        assert tarifaMotoHibrida > 0;
+        setTarifaCarro(tarifaCarro);
+        setTarifaMotoClasica(tarifaMotoClasica);
+        setTarifaMotoHibrida(tarifaMotoHibrida);
+    }
+    /*
+     * Metodo para preparar el parqueadero
+     */
+    public void prepararParqueadero(){
+        generarArregloPropietarios();
+        generarNumPuestos();
+        generarPuestos();
+    }
+    /*
+     * Metodo para modificar la fecha manualmente
+     */
+    public void setFecha(LocalDate fecha){
+        this.fecha = fecha;
+    }
 }
