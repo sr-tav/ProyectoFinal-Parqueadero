@@ -1,12 +1,7 @@
 package co.edu.uniquindio.poo;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import javax.print.attribute.standard.RequestingUserName;
 
 import org.junit.jupiter.api.Test;
 
